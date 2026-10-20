@@ -1,0 +1,270 @@
+<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><title>NovelGrab</title>
+<style>
+:root{--bg:#121316;--s1:#1A1C21;--s2:#22252B;--bd:rgba(255,255,255,.1);--tx:#E6E3DC;--mu:#9AA0AB;--ac:#E0B665;--on:#1B1405;--ok:#6FCF97;--er:#F2777A}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(900px 420px at 85% -10%,rgba(224,182,101,.13),transparent),var(--bg)}
+main{padding:18px 14px 60px;max-width:820px;margin:auto}
+header{display:flex;gap:14px;align-items:center;margin:8px 0 18px}.logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#F0CC84,#C8963C);color:var(--on);font:700 24px Georgia,serif}
+h1{margin:0;font:700 26px Georgia,"Iowan Old Style",serif}header p{margin:2px 0 0;color:var(--mu);font-size:14px}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:18px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+input,select,button{font:inherit;padding:12px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--s2);color:var(--tx);width:100%;outline:0}
+input:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(224,182,101,.2)}
+button{background:var(--ac);color:var(--on);border:0;font-weight:700;cursor:pointer;transition:.15s}button:hover{filter:brightness(1.08)}button:active{transform:scale(.98)}
+button.p{background:var(--s2);color:var(--ac);border:1px solid var(--ac)}button.s{background:transparent;color:var(--er);border:1px solid var(--er)}button.g{background:var(--s2);color:var(--tx);border:1px solid var(--bd)}
+[hidden]{display:none!important}.row{display:flex;gap:10px;margin-top:14px}
+label{font-size:12px;letter-spacing:.4px;text-transform:uppercase;color:var(--mu);display:block;margin:12px 0 5px}#aw{text-transform:none;letter-spacing:0;font-size:13px;margin-top:14px}#aw input{width:auto}
+details{margin-top:12px;color:var(--mu)}summary{cursor:pointer;color:var(--ac)}small{color:var(--mu)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0 12px}
+.bar{height:8px;background:var(--s2);border-radius:99px;overflow:hidden;margin:20px 0 8px}#bar{height:100%;width:0;background:linear-gradient(90deg,#C8963C,#F0CC84);border-radius:99px;transition:width .4s}#sum{color:var(--mu);font-size:14px;margin-bottom:10px}
+.r{display:flex;gap:12px;align-items:center;padding:12px;margin-bottom:8px;background:var(--s1);border:1px solid var(--bd);border-radius:14px;cursor:pointer;font-size:14px;transition:.15s}.r:hover{border-color:var(--ac)}
+.r b{min-width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--s2);color:var(--ac)}.r span{flex:1;word-break:break-word}
+.r em{font-style:normal;font-size:12px;padding:3px 9px;border-radius:99px;background:var(--s2);color:var(--mu)}.r em.ok{color:var(--ok)}.r em.er{color:var(--er)}
+pre{background:#0D0E11;border:1px solid var(--bd);padding:10px;border-radius:12px;max-height:130px;overflow:auto;font-size:11px;color:var(--mu)}
+.nb{position:sticky;top:0;z-index:5;padding:10px;text-align:center;font-weight:600}.nb.bad{background:#8E2F34;color:#fff;animation:pl 1.2s infinite}.nb.ok{background:#1E6B47;color:#fff}@keyframes pl{50%{opacity:.6}}
+#rd{position:fixed;inset:0;background:#fff;display:none;flex-direction:column;z-index:9}#rd.on{display:flex}
+#bt{display:flex;gap:8px;padding:8px;background:var(--bg);border-bottom:1px solid var(--bd);align-items:center;color:var(--tx)}#bt button{width:auto;padding:8px 14px}#bt span{flex:1;font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#fr{flex:1;border:0}
+</style></head><body><div id=nb class=nb hidden></div><main>
+<header><div class=logo>N</div><div><h1>NovelGrab</h1><p>Paste a chapter link. Read the whole story offline.</p></div></header>
+<section class=card><label>First chapter / page URL</label><input id=u type=url placeholder="https://site.com/novel/chapter-1">
+<div class=grid><div><label>How many pages (empty = all)</label><input id=limit type=number min=1></div>
+<div><label>Delay between pages (s)</label><input id=delay type=number value=0.5 step=0.1 min=0></div></div>
+<div class=row><button id=go onclick=start()>Start</button><button id=pb class=p onclick=pause() hidden>Pause</button><button id=sb class=s onclick=halt() hidden>Stop</button></div>
+<details><summary>Advanced</summary><div class=grid>
+<div><label>Pages processed at once</label><select id=workers><option>1<option selected>5<option>10<option>15</select></div>
+<div><label>Images</label><select id=images><option value=embed>Embed (works offline)<option value=links>Keep links<option value=skip>Skip</select></div>
+<div><label>Page style</label><select id=clean><option value=1>Clean reader<option value=0>Original site style</select></div>
+<div id=pxw><label>Browser proxy (needed because of CORS)</label><select id=proxy><option value="https://corsproxy.io/?url=">corsproxy.io<option value="https://api.allorigins.win/raw?url=">allorigins<option value="">None (direct)<option value=custom>Custom...</select></div></div>
+<small id=pxn>Browser mode: a third-party proxy sees the pages you fetch, and some sites will block it. The Android app version has no such limit.</small></details></section>
+<div class=row><button id=zip class=g onclick=getZip() hidden>Download ZIP</button></div>
+<label id=aw style="display:flex;gap:6px;align-items:center"><input id=auto type=checkbox style="width:auto"> also auto-download each page when ready</label>
+<div class=row><button id=libb onclick=showLib() class=g>My downloads</button></div><div id=lib></div>
+<div class=bar><div id=bar></div></div><div id=sum></div><div id=rows></div><pre id=log></pre></main>
+<div id=rd><div id=bt><button onclick=nav(-1)>&lsaquo; Prev</button><button onclick=nav(1)>Next &rsaquo;</button><span id=rt></span><button onclick="$('rd').classList.remove('on')">&#10005;</button></div><iframe id=fr sandbox="allow-scripts"></iframe></div>
+<script>
+const $=id=>document.getElementById(id),P=window.Capacitor&&Capacitor.Plugins||{},H=P.CapacitorHttp,FS=P.Filesystem,BG=P.Bg,APP=!!(H&&FS),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const UA='Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36';
+let lastBg=0,run=false,stop=false,paused=false,stopP=new Promise(()=>{}),stopRes=()=>{},items=[],folder='',logs=[],cur=0,mem={};
+const log=m=>{logs.push(new Date().toTimeString().slice(0,8)+'  '+m);draw()};
+if(APP){$('pxw').hidden=$('pxn').hidden=$('aw').hidden=true}
+$('libb').hidden=!APP;
+$('proxy').onchange=e=>{if(e.target.value=='custom'){const v=prompt('Proxy prefix, e.g. https://my-proxy.example/?url=');const o=new Option(v||'None','');o.selected=true;e.target.add(o)}};
+// ---------- pause / stop
+const gate=async()=>{while(paused&&!stop)await sleep(200)};
+function pause(){paused=!paused;$('pb').textContent=paused?'Resume':'Pause';log(paused?'Paused (finishing requests in progress)':'Resumed');draw()}
+function halt(){stop=true;paused=false;stopRes();log('Stopping...');draw()}
+// ---------- connection watch: banner, wait, auto-resume
+async function probe(){if(!navigator.onLine)return false;const c=new AbortController(),t=setTimeout(()=>c.abort(),6000);
+  try{await fetch('https://www.gstatic.com/generate_204',{mode:'no-cors',cache:'no-store',signal:c.signal});return true}catch{return false}finally{clearTimeout(t)}}
+let nbT,down=false;
+function setNet(ok){const b=$('nb');clearTimeout(nbT);
+  if(!ok){down=true;b.className='nb bad';b.textContent='\u26A0 No internet - waiting to reconnect. Progress is kept.';b.hidden=false;log('Connection lost - waiting...')}
+  else if(down){down=false;b.className='nb ok';b.textContent='\u2713 Back online - resuming';log('Connection restored - resuming');nbT=setTimeout(()=>b.hidden=true,3000)}draw()}
+async function recover(){if(await probe())return false;setNet(false);while(!stop){await sleep(2500);if(await probe())break}setNet(true);return true}
+addEventListener('offline',()=>setNet(false));addEventListener('online',async()=>{if(await probe())setNet(true)});
+async function retryNet(fn){let k=0;for(;;){await gate();if(stop)throw new Error('stopped');
+  try{return await Promise.race([fn(),stopP.then(()=>{throw new Error('stopped')})])}catch(e){if(!e.net)throw e;if(!await recover()&&++k>=2)throw new Error('Blocked or unreachable (CORS/proxy/site down)')}}}
+// ---------- network
+const hdr=(ref,bin)=>{const h={'User-Agent':UA,'Accept':bin?'image/avif,image/webp,image/*,*/*;q=0.8':'text/html,application/xhtml+xml,*/*;q=0.8','Accept-Language':'en-US,en;q=0.9'};if(ref)h.Referer=ref;return h};
+async function http(url,ref,bin,post){
+  if(APP){let r;try{const o={url,headers:hdr(ref,bin),responseType:bin?'blob':'text',connectTimeout:30000,readTimeout:60000};r=await(post?H.post({...o,data:''}):H.get(o))}catch(e){e.net=true;throw e}
+    if(r.status>=400)throw new Error('HTTP '+r.status);const h={};for(const k in r.headers||{})h[k.toLowerCase()]=r.headers[k];
+    return{data:r.data,url:r.url||url,ct:h['content-type']||''}}
+  const px=$('proxy').value;let r;try{r=await fetch(px?px+encodeURIComponent(url):url,{cache:'no-store',method:post?'POST':'GET'})}catch(e){e.net=true;throw e}
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  if(!bin)return{data:await r.text(),url,ct:r.headers.get('content-type')||''};
+  const b=await r.blob(),d=await new Promise(f=>{const x=new FileReader();x.onload=()=>f(x.result);x.readAsDataURL(b)});
+  return{data:d.split(',')[1]||'',url,ct:b.type}}
+async function get(u,ref,bin,tries){let e;for(let i=0;i<tries;i++){try{return await retryNet(()=>http(u,ref,bin))}catch(x){e=x;if(stop||/HTTP (403|404|410)|Blocked/.test(x.message))break;await sleep(1000*(i+1))}}throw e}
+const lim=n=>{let a=0,q=[];return async f=>{if(a>=n)await new Promise(r=>q.push(r));a++;try{return await f()}finally{a--;q.shift()?.()}}},imgLim=lim(8);
+// ---------- next-link detection
+const norm=u=>{try{const x=new URL(u);[...x.searchParams.keys()].forEach(k=>/^utm_|^(fbclid|gclid)$/i.test(k)&&x.searchParams.delete(k));return x.protocol+'//'+x.host.toLowerCase()+(x.pathname.replace(/\/+$/,'')||'/')+x.search}catch{return u}};
+const host=u=>new URL(u).host.toLowerCase().replace(/^www\./,'');
+const RX=[/(?<![a-z])(?:chapter|chap|ch|episode|ep|eps|cap|capitulo|c)[-_/. ]?(\d+)/gid,/[-_/](\d+)(?:\.html?|\.php)?\/?$/gd];
+function chap(p){for(const rx of RX){const ms=[...p.matchAll(rx)];if(ms.length){const m=ms.at(-1),[a,b]=m.indices[1];return[p.slice(0,a),+m[1],p.slice(b)]}}}
+const NEXT=/next|nxt|siguiente|suivant|weiter|pr[oó]ximo|下一|次|다음|[›»→▶➡❯]|>>/i,PREV=/prev|anterior|上一|이전|[‹«←◀]|<<|\bback\b/i;
+function findNext(doc,url,seen,scripts){
+  const cur=chap(new URL(url).pathname),c={};
+  const add=(h,s)=>{h=(h||'').trim().replace(/\\\//g,'/');if(!h||h[0]=='#'||/^(javascript|mailto|tel|data:)/i.test(h))return;let u;try{u=new URL(h,url)}catch{return}
+    if(!/^https?:$/.test(u.protocol)||host(u.href)!=host(url))return;const k=norm(u.href);if(k==norm(url)||seen.has(k))return;
+    const x=chap(u.pathname);if(cur&&x&&x[0]==cur[0]){if(x[1]<=cur[1])return;s+=x[1]==cur[1]+1?60:-20}
+    if(s>0&&s>(c[k]?.[0]||0))c[k]=[s,u.href]};
+  const rl=doc.querySelector('link[rel~=next]');add(rl&&rl.getAttribute('href'),100);
+  doc.querySelectorAll('a[href]').forEach(a=>{const at=['class','id','title','aria-label','rel'].map(n=>a.getAttribute(n)||'').join(' '),t=a.textContent.trim().replace(/\s+/g,' ').slice(0,30);
+    if(PREV.test(t)||/prev|disabled/i.test(at))return;
+    add(a.getAttribute('href'),/next/i.test(a.getAttribute('rel')||'')?100:NEXT.test(t)?55:/next|nxt/i.test(at)?50:0)});
+  for(const sc of scripts)for(const m of sc.matchAll(/["']?next[_-]?(?:chapter|chap|page)?[_-]?(?:url|link)?["']?\s*[:=]\s*["']([^"']{4,300})["']/gi))add(m[1],50);
+  const out=Object.values(c).sort((a,b)=>b[0]-a[0]).map(v=>v[1]).slice(0,3);
+  return{c:out,p:cur?new URL(url).origin+cur[0]+(cur[1]+1)+cur[2]:null}}
+let idx;
+const ICSS=`:root{--bg:#FAF8F4;--s1:#fff;--tx:#1F2328;--mu:#5B6470;--bd:rgba(0,0,0,.1);--ac:#9A6B12;--on:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#121316;--s1:#1A1C21;--tx:#E6E3DC;--mu:#9AA0AB;--bd:rgba(255,255,255,.1);--ac:#E0B665;--on:#1B1405}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}.w{max-width:760px;margin:auto;padding:24px 16px 60px}
+.hero{position:relative;overflow:hidden;border:1px solid var(--bd);border-radius:22px;padding:28px 22px;background:linear-gradient(160deg,var(--s1),var(--bg))}
+.hero:before{content:"";position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(var(--ac),transparent 70%);opacity:.2}
+h1{margin:6px 0;font:700 30px/1.2 Georgia,"Iowan Old Style",serif}.m{color:var(--mu);font-size:14px}
+.go{display:inline-block;margin-top:18px;padding:12px 22px;border-radius:12px;background:var(--ac);color:var(--on);font-weight:700;text-decoration:none}
+#q{width:100%;margin:20px 0 12px;padding:13px 15px;border-radius:12px;border:1px solid var(--bd);background:var(--s1);color:var(--tx);font:inherit;outline:0}#q:focus{border-color:var(--ac)}
+.ch{display:flex;gap:14px;align-items:center;padding:12px 14px;margin-bottom:8px;border:1px solid var(--bd);border-radius:14px;background:var(--s1);color:var(--tx);text-decoration:none;transition:.15s}
+.ch:hover{border-color:var(--ac);transform:translateY(-1px)}.ch b{min-width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--bg);color:var(--ac);font-size:14px}.ch span{flex:1}`;
+const bookTitle=(t,h)=>{const r=(t||'').replace(/\s*[-–—|:]\s*(chapter|chap|ch|episode|ep)\b.*$/i,'').trim();return r&&!/^(chapter|chap|ch|episode|ep)\b/i.test(r)?r:h};
+const shortT=(t,b,n)=>(t||'').replace(b,'').replace(/^[\s\-–—|:]+/,'').replace(/[\s\-–—|]+[\w.-]+\.(com|net|org|io|me|app|co|xyz)\s*$/i,'').trim()||'Chapter '+n;
+function indexPage(done,url){const h=host(url),bt=bookTitle(done[0]&&done[0].title,h);
+  return`<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>${esc(bt)}</title><style>${ICSS}</style><div class=w><div class=hero><div class=m>${esc(h)}</div><h1>${esc(bt)}</h1><div class=m>${done.length} chapters &middot; saved ${new Date().toLocaleDateString()}</div>${done[0]?`<a class=go href="${encodeURIComponent(done[0].file)}">Start reading</a>`:''}</div><input id=q placeholder="Search chapters"><div>${done.map(i=>`<a class=ch href="${encodeURIComponent(i.file)}"><b>${i.n}</b><span>${esc(shortT(i.title,bt,i.n))}</span></a>`).join('')}</div></div><script>document.getElementById('q').oninput=e=>{const v=e.target.value.toLowerCase();document.querySelectorAll('.ch').forEach(a=>a.style.display=a.textContent.toLowerCase().includes(v)?'':'none')}<\/script>`}
+// ---------- real chapter list ("index"): used when a page has no usable Next link (missing chapters, disabled button)
+function chLinks(d,base,url,cur){const o={},pb=url.replace(/[^/]*\/?$/,'');   // pb = series folder, for <option value="chapter-5">
+  d.querySelectorAll('a[href],option').forEach(e=>{const raw=['href','data-redirect','data-href','data-url','value'].map(k=>e.getAttribute(k)).filter(Boolean);
+    for(const h of raw)for(const b of[base,pb]){const u=abs(h,b);if(!u||host(u)!=host(url))continue;const x=chap(new URL(u).pathname);if(x&&x[0]==cur[0]){o[norm(u)]={u,n:x[1]};return}}});
+  return Object.values(o)}
+function pageIdx(doc,url){if(idx&&idx.length)return;const cur=chap(new URL(url).pathname);if(!cur)return;   // full chapter list already inside the page
+  const L=chLinks(doc,url,url,cur).sort((a,b)=>a.n-b.n);
+  if(L.length>=3&&L.some(x=>x.n<=cur[1])&&(L[0].n<=2||L.length>=30)){idx=L;log('Chapter list found on the page ('+L.length+' chapters)')}}
+function indexCands(doc,url,cur){const out=[],add=h=>{const u=abs(h,url);if(!u||host(u)!=host(url)||norm(u)==norm(url)||out.includes(u))return;const x=chap(new URL(u).pathname);if(x&&x[0]==cur[0])return;out.push(u)};
+  [...doc.querySelectorAll('.breadcrumb a,[itemtype*=Breadcrumb] a')].reverse().forEach(a=>add(a.getAttribute('href')));
+  doc.querySelectorAll('a[href]').forEach(a=>{const t=(a.textContent+' '+(a.title||'')+' '+(a.className||'')).slice(0,90);if(/chapter\s*list|all\s*chapters|table of contents|\bindex\b|\btoc\b|contents|novel\s*info|manga\s*info|series|details?\b/i.test(t)&&!/next|prev/i.test(t))add(a.getAttribute('href'))});
+  const p=new URL(url),b=p.origin+cur[0];
+  [p.origin+p.pathname.replace(/\/[^/]*\/?$/,'/'),b.replace(/[-_]?(chapter|chap|ch|episode|ep)?[-_/. ]*$/i,'')+'/',b.replace(/[-_/. ]+$/,'')+cur[2]].forEach(add);
+  return out.slice(0,5)}
+async function getIdx(doc,url){if(idx!==undefined)return idx;
+  const cur=chap(new URL(url).pathname);if(!cur)return idx=null;
+  const ok=L=>L.length>=3&&L.some(x=>x.n<=cur[1]);let L=chLinks(doc,url,url,cur);   // a full list always contains earlier chapters; "latest chapters" widgets don't
+  if(!ok(L))for(const c of indexCands(doc,url,cur)){
+    try{const r=await get(c,url,false,2);L=chLinks(new DOMParser().parseFromString(r.data,'text/html'),r.url,url,cur);
+      if(!ok(L)){try{const r2=await retryNet(()=>http(c.replace(/\/?$/,'/')+'ajax/chapters/',c,false,true));L=chLinks(new DOMParser().parseFromString(r2.data,'text/html'),c,url,cur)}catch{}}
+      if(ok(L)){log('Chapter list found ('+L.length+' chapters)');break}}catch{}}
+  return idx=ok(L)?L.sort((a,b)=>a.n-b.n):null}
+async function viaIndex(ctx,seen){const L=await getIdx(ctx.doc,ctx.url),cur=chap(new URL(ctx.url).pathname);if(!L||!cur)return[];return L.filter(x=>x.n>cur[1]&&!seen.has(norm(x.u))).slice(0,2).map(x=>x.u)}
+// ---------- page building
+const nameOf=it=>String(it.n).padStart(3,'0')+'_'+((it.title||it.url.split('/').filter(Boolean).pop()||'page').replace(/[^\p{L}\p{N}\-]+/gu,'_').replace(/^_|_$/g,'').slice(0,50)||'page')+'.html';
+const NB='display:inline-block;padding:8px 16px;border-radius:10px;background:#E0B665;color:#1B1405;text-decoration:none;font:700 14px system-ui',
+KEYS="<script>addEventListener('keydown',e=>{const a=document.getElementById(e.key=='ArrowRight'?'ng-n':e.key=='ArrowLeft'?'ng-p':'-');a&&location.assign(a.href)})<\\/script>";
+const LAZY=['data-src','data-lazy-src','data-original','data-cfsrc','data-lazy','data-url','data-echo','data-img','src'],EXT=/\.(?:jpe?g|png|webp|avif|gif)(?:[?#]|$)/i;
+const abs=(s,b)=>{try{return new URL(s,b).href}catch{return null}};
+function imgUrl(img,base){let s=LAZY.map(k=>img.getAttribute(k)).find(v=>v&&!v.startsWith('data:'));
+  if(!s)for(const a of img.attributes)if(!/^(alt|class|id|style)$|srcset/.test(a.name)&&EXT.test(a.value)&&!/\s/.test(a.value)&&!a.value.startsWith('data:')){s=a.value;break}
+  if(!s){const ss=img.getAttribute('srcset')||img.getAttribute('data-srcset');if(ss)s=ss.split(',').pop().trim().split(/\s+/)[0]}
+  return s?abs(s.trim(),base):null}
+const sniff=b=>b.startsWith('/9j/')?'image/jpeg':b.startsWith('iVBOR')?'image/png':b.startsWith('R0lG')?'image/gif':b.startsWith('UklG')?'image/webp':null;
+async function grab(u,ref){for(const r of[ref,new URL(ref).origin+'/',null])for(let i=0;i<2;i++){if(stop)return null;
+  try{const x=await retryNet(()=>http(u,r,true)),t=x.ct.split(';')[0].trim().toLowerCase(),m=t.startsWith('image/')?t:sniff(x.data);if(m&&x.data.length>130)return`data:${m};base64,${x.data}`}catch(e){}
+  await sleep(600)}return null}
+async function build(html,url,mode,clean,map,P,N){
+  const doc=new DOMParser().parseFromString(html,'text/html'),scripts=[...doc.querySelectorAll('script')].map(s=>s.textContent);
+  doc.querySelectorAll('noscript').forEach(n=>n.querySelector('img')?n.replaceWith(...n.childNodes):n.remove());
+  doc.querySelectorAll('script,iframe,ins.adsbygoogle,base'+(clean?',link[rel~=stylesheet],style':'')).forEach(n=>n.remove());
+  doc.querySelectorAll('*').forEach(e=>[...e.attributes].forEach(a=>/^on/i.test(a.name)&&e.removeAttribute(a.name)));
+  const have=new Set([...doc.querySelectorAll('img')].map(i=>imgUrl(i,url))),extra=[];
+  for(const sc of scripts){if(sc.length>3e6)continue;
+    for(const m of sc.matchAll(/\[\s*(?:(?:"[^"]+"|'[^']+')\s*,\s*)+(?:"[^"]+"|'[^']+')\s*,?\s*\]/g)){
+      const us=[...m[0].matchAll(/["']([^"']+?\.(?:jpe?g|png|webp|avif|gif)(?:\?[^"']*)?)["']/gi)].map(x=>abs(x[1].replace(/\\\//g,'/').replace(/\\u002F/gi,'/'),url)).filter(Boolean);
+      if(us.length>=3&&us.length>=.8*(m[0].match(/["'][^"']*["']/g)||[]).length)us.forEach(u=>!have.has(u)&&!extra.includes(u)&&extra.push(u))}}
+  extra.forEach(u=>{const i=doc.createElement('img');i.setAttribute('src',u);doc.body.append(i)});
+  let list=[...doc.querySelectorAll('img')].map(i=>[i,imgUrl(i,url)]);
+  const junk=/gravatar|avatar|logo|banner|favicon|emoji|sprite|pixel|doubleclick|googlesyndication|pubadx|infolinks|adserver|\/ads?\/|\bad[sx]?[-_.]/i,dirOf=u=>u.replace(/[?#].*$/,'').replace(/\/[^/]*$/,''),cnt={};
+  list.forEach(([i,u])=>{if(u&&!junk.test(u))cnt[dirOf(u)]=(cnt[dirOf(u)]||0)+1});   // the chapter pages share one folder; ads/avatars don't
+  const mx=Math.max(0,...Object.values(cnt)),keep=new Set(Object.keys(cnt).filter(d=>cnt[d]==mx||(cnt[d]>=3&&cnt[d]>=mx/2)));
+  list=list.filter(([i,u])=>{if(!u)return true;if(junk.test(u)||(mx>=3&&!keep.has(dirOf(u)))){i.remove();return false}return true});
+  const todo=[...new Set(list.map(x=>x[1]).filter(Boolean))],data={};
+  if(mode=='embed'&&todo.length){await Promise.all(todo.map(u=>imgLim(async()=>{data[u]=await grab(u,url)})));
+    for(const u of todo)if(!data[u]&&!stop){await sleep(1000);data[u]=await grab(u,url)}}
+  const bad=mode=='embed'?todo.filter(u=>!data[u]).length:0;
+  for(const[i,u]of list){if(!u)continue;if(mode=='skip'||i.getAttribute('width')=='1'||i.getAttribute('height')=='1'){i.remove();continue}
+    const alt=i.getAttribute('alt')||'';[...i.attributes].forEach(a=>i.removeAttribute(a.name));i.setAttribute('src',data[u]||u);i.setAttribute('alt',alt)}
+  const css='img{max-width:100%;height:auto;display:block;margin:0 auto}'+(clean?'body{max-width:900px;margin:0 auto;padding:12px;font:18px/1.7 system-ui,serif;background:#fff;color:#111}':'');
+  // links: chapters we saved point to the local files, everything else becomes an absolute web link
+  doc.querySelectorAll('a[href]').forEach(a=>{const h=a.getAttribute('href'),u=abs(h,url);if(!u||h[0]=='#'||/^(javascript|mailto|tel):/i.test(h))return;const f=map[norm(u)];a.setAttribute('href',f?encodeURIComponent(f):u);a.removeAttribute('target')});
+  doc.querySelectorAll('link[href]').forEach(l=>{const u=abs(l.getAttribute('href'),url);u&&l.setAttribute('href',u)});
+  const btn=(h,t,id)=>h?`<a ${id?'id='+id+' ':''}href="${encodeURIComponent(h)}" style="${NB}">${t}</a>`:`<span style="${NB};opacity:.35">${t}</span>`,
+  nav=top=>`<div id=ngnav${top?'':'2'} style="${top?'position:sticky;top:0;z-index:99999;':''}display:flex;justify-content:space-between;gap:8px;padding:8px;background:#121316;border-bottom:1px solid rgba(255,255,255,.12);text-align:center">${btn(P,'&lsaquo; Prev',top&&'ng-p')}${btn('index.html','&#9776; Index')}${btn(N,'Next &rsaquo;',top&&'ng-n')}</div>`;
+  doc.body.insertAdjacentHTML('afterbegin',nav(true));doc.body.insertAdjacentHTML('beforeend',nav(false)+KEYS);
+  doc.head.insertAdjacentHTML('afterbegin',`<meta charset="utf-8"><style>${css}</style>`);
+  return['<!doctype html>'+doc.documentElement.outerHTML,todo.length,bad]}
+// ---------- saving (app: Documents folder, browser: memory + ZIP)
+async function save(path,s){const N=1500000;let i=0,first=true;
+  while(i<s.length||first){let e=Math.min(i+N,s.length);if(e<s.length&&(s.charCodeAt(e)&0xFC00)==0xDC00)e--;
+    const o={path,data:s.slice(i,e),directory:'DOCUMENTS',encoding:'utf8',recursive:true};first?await FS.writeFile(o):await FS.appendFile(o);first=false;i=e}}
+const crcT=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc=b=>{let c=-1;for(let i=0;i<b.length;i++)c=crcT[(c^b[i])&255]^(c>>>8);return(c^-1)>>>0};
+function zip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
+  for(const[name,txt]of Object.entries(files)){const nb=enc.encode(name),d=enc.encode(txt),c=crc(d),h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x800,true);h.setUint32(14,c,true);h.setUint32(18,d.length,true);h.setUint32(22,d.length,true);h.setUint16(26,nb.length,true);parts.push(h.buffer,nb,d);
+    const e=new DataView(new ArrayBuffer(46));e.setUint32(0,0x02014b50,true);e.setUint16(4,20,true);e.setUint16(6,20,true);e.setUint16(8,0x800,true);e.setUint32(16,c,true);e.setUint32(20,d.length,true);e.setUint32(24,d.length,true);e.setUint16(28,nb.length,true);e.setUint32(42,off,true);cen.push(e.buffer,nb);off+=30+nb.length+d.length}
+  const cs=cen.reduce((a,b)=>a+b.byteLength,0),n=cen.length/2,z=new DataView(new ArrayBuffer(22));z.setUint32(0,0x06054b50,true);z.setUint16(8,n,true);z.setUint16(10,n,true);z.setUint32(12,cs,true);z.setUint32(16,off,true);
+  return new Blob([...parts,...cen,z.buffer],{type:'application/zip'})}
+function dl(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4e4)}
+const getZip=()=>dl((folder||'novelgrab')+'.zip',zip(mem));
+let mq=Promise.resolve();
+const saveMan=()=>APP?(mq=mq.then(()=>save(`NovelGrab/${folder}/manifest.json`,JSON.stringify(items.filter(i=>i.file).map(i=>({n:i.n,title:i.title,url:i.url,file:i.file,keys:i.keys,note:i.note}))))).catch(()=>{})):0;
+async function work(it,html,url,mode,clean,prev){
+  try{const nx=await it.nextP,map={},P=prev&&nameOf(prev),N=nx&&nameOf(nx);
+    if(prev)prev.keys.forEach(k=>map[k]=P);if(nx)nx.keys.forEach(k=>map[k]=N);
+    const[out,ni,bad]=await build(html,url,mode,clean,map,P,N);
+    const name=nameOf(it);
+    if(APP)await save(`NovelGrab/${it.dir}/${name}`,out);else{mem[name]=out;if($('auto').checked)dl(name,new Blob([out],{type:'text/html'}))}
+    it.file=name;it.st='done';saveMan();it.note=ni?ni+' images'+(bad?', '+bad+' FAILED':''):'';if(bad)log(`#${it.n}: ${bad} of ${ni} images could not be downloaded`);else if(mode=='embed'&&!ni)log(`#${it.n}: no images found in this page`)
+  }catch(e){it.st='error: '+e.message}
+  draw()}
+// ---------- crawl
+async function start(){
+  let url=$('u').value.trim().replace(/^["']|["']$/g,'');if(!url)return;if(!/^https?:\/\//i.test(url))url='https://'+url;
+  const limit=+$('limit').value||0,workers=+$('workers').value,delay=+$('delay').value||0,mode=$('images').value,clean=$('clean').value=='1';
+  items=[];logs=[];mem={};stop=false;paused=false;run=true;stopP=new Promise(f=>stopRes=f);$('go').hidden=true;$('pb').hidden=$('sb').hidden=false;$('pb').textContent='Pause';
+  folder=host(url).replace(/\./g,'-')+'_'+new Date().toISOString().slice(0,16).replace(/\D/g,'');
+  let wl;try{wl=await navigator.wakeLock.request('screen')}catch{}
+  if(APP)try{await FS.requestPermissions()}catch{}
+  if(BG)try{await BG.start({text:'Starting download...'});if(!localStorage.ngBat){localStorage.ngBat=1;BG.battery()}}catch{}   // keep running in the background
+  const seen=new Set(),pending=new Set();let queue=[{u:url}],n=0,prev=null,ctx=null;idx=undefined;
+  try{while(!stop&&(!limit||n<limit)){
+    await gate();if(stop)break;
+    if(!queue.length){queue=ctx?(await viaIndex(ctx,seen)).map(u=>({u})):[];if(!queue.length){if(n)log('Reached the end of the chapter list.');break}log('No next link - continuing from the chapter list')}
+    const q=queue.shift(),u=q.u;
+    if(q.p){const L=ctx&&await getIdx(ctx.doc,ctx.url);if(L&&!L.some(x=>norm(x.u)==norm(u)))continue}   // guessed URL: only trust it if the chapter list has it
+    let r;
+    try{r=await get(u,null,false,n?2:3)}catch(e){if(stop)break;seen.add(norm(u));log('Could not open '+u+' ('+e.message+')');if(!n)break;continue}
+    if(ctx){const c0=chap(new URL(ctx.url).pathname),x=chap(new URL(r.url).pathname);if(c0&&(!x||(x[0]==c0[0]&&x[1]<=c0[1]))){seen.add(norm(u));seen.add(norm(r.url));log('Skipped '+u+' (not the next chapter)');continue}}
+    seen.add(norm(u));seen.add(norm(r.url));n++;
+    const doc=new DOMParser().parseFromString(r.data,'text/html'),scripts=[...doc.querySelectorAll('script')].map(s=>s.textContent);
+    const it={n,url:r.url,dir:folder,title:(doc.title||'').trim().replace(/\s+/g,' '),file:'',st:'working',keys:[norm(u),norm(r.url)]};it.nextP=new Promise(f=>it.setNext=f);const pv=prev;if(pv)pv.setNext(it);prev=it;items.push(it);log('Found #'+n+'  '+r.url);
+    while(pending.size>=workers&&!stop)await Promise.race([...pending,stopP]);
+    const p=work(it,r.data,r.url,mode,clean,pv).finally(()=>pending.delete(p));pending.add(p);
+    ctx={doc,url:r.url};pageIdx(doc,r.url);const last=limit&&n>=limit,nx=last?{c:[],p:null}:findNext(doc,r.url,seen,scripts),cx=chap(new URL(r.url).pathname);
+    queue=last?[]:idx&&idx.length?idx.filter(x=>cx&&x.n>cx[1]&&!seen.has(norm(x.u))).slice(0,3).map(x=>({u:x.u})):[...nx.c.map(u=>({u})),...(nx.p?[{u:nx.p,p:1}]:[])];
+    await sleep(delay*1000)}
+  }catch(e){log('Error: '+e.message)}
+  prev&&prev.setNext(null);
+  await Promise.all(pending);await saveMan();
+  const done=items.filter(i=>i.file);
+  const ix=indexPage(done,url);
+  if(APP){try{await save(`NovelGrab/${folder}/index.html`,ix)}catch(e){}}else mem['index.html']=ix;
+  run=false;paused=false;$('go').hidden=false;$('pb').hidden=$('sb').hidden=true;try{wl&&wl.release()}catch{}BG&&BG.stop().catch(()=>{});
+  log(stop?'Stopped.':'Finished.');log(done.length+(APP?' saved to Documents/NovelGrab/'+folder:' pages ready - press Download ZIP'))}
+// ---------- UI
+function draw(){const d=items.filter(i=>i.file).length,t=items.length,L=+$('limit').value||0;
+  $('bar').style.width=(L?d/L*100:t?d/t*100:0)+'%';
+  if(run&&BG&&Date.now()-lastBg>2500){lastBg=Date.now();BG.update({text:d+' saved / '+t+' found'+(down?' - waiting for internet':paused?' - paused':'')}).catch(()=>{})}
+  $('sum').textContent=d+' saved / '+t+' found'+(run?(down?' - waiting for internet':paused?' - paused':stop?' - stopping...':' - running (keep this page open)'):t?(APP?' - in Documents/NovelGrab/'+folder:' - done'):'');
+  $('zip').hidden=APP||!d;
+  $('rows').innerHTML=items.slice().reverse().map(i=>`<div class=r data-n=${i.n}><b>${i.n}</b><span>${esc(i.title||i.url)}</span><em class="${i.file?'ok':/^err/.test(i.st)?'er':''}">${i.file?'&#10003; '+esc(i.note||'tap to read'):esc(i.st)}</em></div>`).join('');
+  $('log').textContent=logs.slice(-40).join('\n')}
+$('rows').onclick=e=>{const r=e.target.closest('.r');if(r)openR(+r.dataset.n)};
+const READER="<script>addEventListener('click',e=>{const a=e.target.closest('a[href]');if(!a)return;const h=a.getAttribute('href');if(!h||h[0]=='#')return;e.preventDefault();parent.postMessage({ng:h},'*')})<\/script>";
+const toast=m=>{$('rt').textContent=m;setTimeout(()=>{const c=items.find(i=>i.n==cur);$('rt').textContent=c?c.n+'. '+(c.title||''):''},2500)};
+async function openR(n){const it=items.find(i=>i.n==n&&i.file);if(!it)return;cur=n;
+  try{const h=APP?(await FS.readFile({path:`NovelGrab/${it.dir}/${it.file}`,directory:'DOCUMENTS',encoding:'utf8'})).data:mem[it.file];
+    $('fr').srcdoc=h+READER;$('rt').textContent=n+'. '+(it.title||'');$('rd').classList.add('on')}catch(e){log('Cannot open: '+e.message)}}
+function go(h){let d=h;try{d=decodeURIComponent(h)}catch{}
+  if(d=='index.html'){$('rd').classList.remove('on');return}
+  let t=items.find(i=>i.file==d);
+  if(!t){const c=items.find(i=>i.n==cur),k=norm(abs(h,c?c.url:location.href)||h);t=items.find(i=>i.file&&(i.keys||[norm(i.url)]).includes(k))}
+  t?openR(t.n):toast('Not downloaded: '+h.slice(0,60))}
+addEventListener('message',e=>{if(e.source===$('fr').contentWindow&&e.data&&e.data.ng)go(e.data.ng)});
+// ---------- library (app): reopen earlier downloads
+async function showLib(){let r;try{r=await FS.readdir({path:'NovelGrab',directory:'DOCUMENTS'})}catch{$('lib').innerHTML='<p>No downloads yet.</p>';return}
+  const names=r.files.filter(f=>f.type=='directory').map(f=>f.name).sort().reverse(),rows=await Promise.all(names.map(async d=>{let t=d;
+    try{const m=JSON.parse((await FS.readFile({path:`NovelGrab/${d}/manifest.json`,directory:'DOCUMENTS',encoding:'utf8'})).data);t=(m[0]&&m[0].title||d)+'  ('+m.length+' chapters)'}catch{}
+    return`<div class=r data-b="${esc(d)}"><span>${esc(t)}</span><em class=ok>open</em></div>`}));
+  $('lib').innerHTML=rows.join('')||'<p>No downloads yet.</p>'}
+$('lib').onclick=async e=>{const r=e.target.closest('[data-b]');if(!r)return;const d=r.dataset.b;
+  try{const m=JSON.parse((await FS.readFile({path:`NovelGrab/${d}/manifest.json`,directory:'DOCUMENTS',encoding:'utf8'})).data);items=m.map(i=>({...i,dir:d,st:'done'}));folder=d;run=false;$('lib').innerHTML='';draw();scrollTo(0,$('rows').offsetTop)}catch(x){log('Cannot open: '+x.message)}};
+const nav=d=>openR(cur+d);
+if(!navigator.onLine)setNet(false);draw();
+</script></body></html>
