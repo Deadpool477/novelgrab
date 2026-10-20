@@ -26,6 +26,17 @@ public class MainActivity extends BridgeActivity {
         }, 1000);
     }
 
+    // Leaving the app with the back button while a download runs also ends it completely.
+    @Override
+    public void onDestroy() {
+        boolean closing = isFinishing() && BgService.on;
+        super.onDestroy();
+        if (closing) {
+            BgService.shutdown(getApplicationContext());
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();

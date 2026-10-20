@@ -1,24 +1,24 @@
 <!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><title>NovelGrab</title>
 <style>
-:root{--bg:#121316;--s1:#1A1C21;--s2:#22252B;--bd:rgba(255,255,255,.1);--tx:#E6E3DC;--mu:#9AA0AB;--ac:#E0B665;--on:#1B1405;--ok:#6FCF97;--er:#F2777A}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(900px 420px at 85% -10%,rgba(224,182,101,.13),transparent),var(--bg)}
+:root{--bg:#0E1021;--s1:#171A33;--s2:#1F2347;--bd:rgba(255,255,255,.1);--tx:#E8EAF6;--mu:#9AA3C7;--ac:#8B93FF;--on:#0B0D1F;--ok:#6EE7B7;--er:#FF8A9B}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(900px 420px at 85% -10%,rgba(139,147,255,.13),transparent),var(--bg)}
 main{padding:18px 14px 60px;max-width:820px;margin:auto}
-header{display:flex;gap:14px;align-items:center;margin:8px 0 18px}.logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#F0CC84,#C8963C);color:var(--on);font:700 24px Georgia,serif}
+header{display:flex;gap:14px;align-items:center;margin:8px 0 18px}.logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#B58CFF,#6C73F5);color:var(--on);font:700 24px Georgia,serif}
 h1{margin:0;font:700 26px Georgia,"Iowan Old Style",serif}header p{margin:2px 0 0;color:var(--mu);font-size:14px}
 .card{background:var(--s1);border:1px solid var(--bd);border-radius:18px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 input,select,button{font:inherit;padding:12px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--s2);color:var(--tx);width:100%;outline:0}
-input:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(224,182,101,.2)}
+input:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(139,147,255,.2)}
 button{background:var(--ac);color:var(--on);border:0;font-weight:700;cursor:pointer;transition:.15s}button:hover{filter:brightness(1.08)}button:active{transform:scale(.98)}
 button.p{background:var(--s2);color:var(--ac);border:1px solid var(--ac)}button.s{background:transparent;color:var(--er);border:1px solid var(--er)}button.g{background:var(--s2);color:var(--tx);border:1px solid var(--bd)}
 [hidden]{display:none!important}.row{display:flex;gap:10px;margin-top:14px}
 label{font-size:12px;letter-spacing:.4px;text-transform:uppercase;color:var(--mu);display:block;margin:12px 0 5px}#aw{text-transform:none;letter-spacing:0;font-size:13px;margin-top:14px}#aw input{width:auto}
 details{margin-top:12px;color:var(--mu)}summary{cursor:pointer;color:var(--ac)}small{color:var(--mu)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0 12px}
-.bar{height:8px;background:var(--s2);border-radius:99px;overflow:hidden;margin:20px 0 8px}#bar{height:100%;width:0;background:linear-gradient(90deg,#C8963C,#F0CC84);border-radius:99px;transition:width .4s}#sum{color:var(--mu);font-size:14px;margin-bottom:10px}
+.bar{height:8px;background:var(--s2);border-radius:99px;overflow:hidden;margin:20px 0 8px}#bar{height:100%;width:0;background:linear-gradient(90deg,#6C73F5,#B58CFF);border-radius:99px;transition:width .4s}#sum{color:var(--mu);font-size:14px;margin-bottom:10px}
 .r{display:flex;gap:12px;align-items:center;padding:12px;margin-bottom:8px;background:var(--s1);border:1px solid var(--bd);border-radius:14px;cursor:pointer;font-size:14px;transition:.15s}.r:hover{border-color:var(--ac)}
 .r b{min-width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--s2);color:var(--ac)}.r span{flex:1;word-break:break-word}
 .r em{font-style:normal;font-size:12px;padding:3px 9px;border-radius:99px;background:var(--s2);color:var(--mu)}.r em.ok{color:var(--ok)}.r em.er{color:var(--er)}
-pre{background:#0D0E11;border:1px solid var(--bd);padding:10px;border-radius:12px;max-height:130px;overflow:auto;font-size:11px;color:var(--mu)}
+pre{background:#0A0B1A;border:1px solid var(--bd);padding:10px;border-radius:12px;max-height:130px;overflow:auto;font-size:11px;color:var(--mu)}
 .nb{position:sticky;top:0;z-index:5;padding:10px;text-align:center;font-weight:600}.nb.bad{background:#8E2F34;color:#fff;animation:pl 1.2s infinite}.nb.ok{background:#1E6B47;color:#fff}@keyframes pl{50%{opacity:.6}}
 #rd{position:fixed;inset:0;background:#fff;display:none;flex-direction:column;z-index:9}#rd.on{display:flex}
 #bt{display:flex;gap:8px;padding:8px;background:var(--bg);border-bottom:1px solid var(--bd);align-items:center;color:var(--tx)}#bt button{width:auto;padding:8px 14px}#bt span{flex:1;font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#fr{flex:1;border:0}
@@ -49,9 +49,9 @@ if(APP){$('pxw').hidden=$('pxn').hidden=$('aw').hidden=true}
 $('libb').hidden=!APP;
 $('proxy').onchange=e=>{if(e.target.value=='custom'){const v=prompt('Proxy prefix, e.g. https://my-proxy.example/?url=');const o=new Option(v||'None','');o.selected=true;e.target.add(o)}};
 // ---------- pause / stop
-const gate=async()=>{while(paused&&!stop)await sleep(200)};
+const gate=async()=>{while(paused&&!stop)await sleep(200)},nap=ms=>Promise.race([sleep(ms),stopP]);
 function pause(){paused=!paused;$('pb').textContent=paused?'Resume':'Pause';log(paused?'Paused (finishing requests in progress)':'Resumed');draw()}
-function halt(){stop=true;paused=false;stopRes();log('Stopping...');draw()}
+function halt(){stop=true;paused=false;stopRes();$('sb').disabled=true;$('sb').textContent='Stopping...';BG&&BG.stop().catch(()=>{});log('Stopping...');draw()}
 // ---------- connection watch: banner, wait, auto-resume
 async function probe(){if(!navigator.onLine)return false;const c=new AbortController(),t=setTimeout(()=>c.abort(),6000);
   try{await fetch('https://www.gstatic.com/generate_204',{mode:'no-cors',cache:'no-store',signal:c.signal});return true}catch{return false}finally{clearTimeout(t)}}
@@ -66,7 +66,7 @@ async function retryNet(fn){let k=0;for(;;){await gate();if(stop)throw new Error
 // ---------- network
 const hdr=(ref,bin)=>{const h={'User-Agent':UA,'Accept':bin?'image/avif,image/webp,image/*,*/*;q=0.8':'text/html,application/xhtml+xml,*/*;q=0.8','Accept-Language':'en-US,en;q=0.9'};if(ref)h.Referer=ref;return h};
 async function http(url,ref,bin,post){
-  if(APP){let r;try{const o={url,headers:hdr(ref,bin),responseType:bin?'blob':'text',connectTimeout:30000,readTimeout:60000};r=await(post?H.post({...o,data:''}):H.get(o))}catch(e){e.net=true;throw e}
+  if(APP){let r;try{const o={url,headers:hdr(ref,bin),responseType:bin?'blob':'text',connectTimeout:15000,readTimeout:30000};r=await(post?H.post({...o,data:''}):H.get(o))}catch(e){e.net=true;throw e}
     if(r.status>=400)throw new Error('HTTP '+r.status);const h={};for(const k in r.headers||{})h[k.toLowerCase()]=r.headers[k];
     return{data:r.data,url:r.url||url,ct:h['content-type']||''}}
   const px=$('proxy').value;let r;try{r=await fetch(px?px+encodeURIComponent(url):url,{cache:'no-store',method:post?'POST':'GET'})}catch(e){e.net=true;throw e}
@@ -96,8 +96,8 @@ function findNext(doc,url,seen,scripts){
   const out=Object.values(c).sort((a,b)=>b[0]-a[0]).map(v=>v[1]).slice(0,3);
   return{c:out,p:cur?new URL(url).origin+cur[0]+(cur[1]+1)+cur[2]:null}}
 let idx;
-const ICSS=`:root{--bg:#FAF8F4;--s1:#fff;--tx:#1F2328;--mu:#5B6470;--bd:rgba(0,0,0,.1);--ac:#9A6B12;--on:#fff}
-@media(prefers-color-scheme:dark){:root{--bg:#121316;--s1:#1A1C21;--tx:#E6E3DC;--mu:#9AA0AB;--bd:rgba(255,255,255,.1);--ac:#E0B665;--on:#1B1405}}
+const ICSS=`:root{--bg:#F6F7FE;--s1:#fff;--tx:#1B1F3B;--mu:#5A6090;--bd:rgba(0,0,0,.1);--ac:#4F46E5;--on:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#0E1021;--s1:#171A33;--tx:#E8EAF6;--mu:#9AA3C7;--bd:rgba(255,255,255,.1);--ac:#8B93FF;--on:#0B0D1F}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}.w{max-width:760px;margin:auto;padding:24px 16px 60px}
 .hero{position:relative;overflow:hidden;border:1px solid var(--bd);border-radius:22px;padding:28px 22px;background:linear-gradient(160deg,var(--s1),var(--bg))}
 .hero:before{content:"";position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(var(--ac),transparent 70%);opacity:.2}
@@ -135,7 +135,7 @@ async function getIdx(doc,url){if(idx!==undefined)return idx;
 async function viaIndex(ctx,seen){const L=await getIdx(ctx.doc,ctx.url),cur=chap(new URL(ctx.url).pathname);if(!L||!cur)return[];return L.filter(x=>x.n>cur[1]&&!seen.has(norm(x.u))).slice(0,2).map(x=>x.u)}
 // ---------- page building
 const nameOf=it=>String(it.n).padStart(3,'0')+'_'+((it.title||it.url.split('/').filter(Boolean).pop()||'page').replace(/[^\p{L}\p{N}\-]+/gu,'_').replace(/^_|_$/g,'').slice(0,50)||'page')+'.html';
-const NB='display:inline-block;padding:8px 16px;border-radius:10px;background:#E0B665;color:#1B1405;text-decoration:none;font:700 14px system-ui',
+const NB='display:inline-block;padding:8px 16px;border-radius:10px;background:#8B93FF;color:#0B0D1F;text-decoration:none;font:700 14px system-ui',
 KEYS="<script>addEventListener('keydown',e=>{const a=document.getElementById(e.key=='ArrowRight'?'ng-n':e.key=='ArrowLeft'?'ng-p':'-');a&&location.assign(a.href)})<\\/script>";
 const LAZY=['data-src','data-lazy-src','data-original','data-cfsrc','data-lazy','data-url','data-echo','data-img','src'],EXT=/\.(?:jpe?g|png|webp|avif|gif)(?:[?#]|$)/i;
 const abs=(s,b)=>{try{return new URL(s,b).href}catch{return null}};
@@ -174,7 +174,7 @@ async function build(html,url,mode,clean,map,P,N){
   doc.querySelectorAll('a[href]').forEach(a=>{const h=a.getAttribute('href'),u=abs(h,url);if(!u||h[0]=='#'||/^(javascript|mailto|tel):/i.test(h))return;const f=map[norm(u)];a.setAttribute('href',f?encodeURIComponent(f):u);a.removeAttribute('target')});
   doc.querySelectorAll('link[href]').forEach(l=>{const u=abs(l.getAttribute('href'),url);u&&l.setAttribute('href',u)});
   const btn=(h,t,id)=>h?`<a ${id?'id='+id+' ':''}href="${encodeURIComponent(h)}" style="${NB}">${t}</a>`:`<span style="${NB};opacity:.35">${t}</span>`,
-  nav=top=>`<div id=ngnav${top?'':'2'} style="${top?'position:sticky;top:0;z-index:99999;':''}display:flex;justify-content:space-between;gap:8px;padding:8px;background:#121316;border-bottom:1px solid rgba(255,255,255,.12);text-align:center">${btn(P,'&lsaquo; Prev',top&&'ng-p')}${btn('index.html','&#9776; Index')}${btn(N,'Next &rsaquo;',top&&'ng-n')}</div>`;
+  nav=top=>`<div id=ngnav${top?'':'2'} style="${top?'position:sticky;top:0;z-index:99999;':''}display:flex;justify-content:space-between;gap:8px;padding:8px;background:#0E1021;border-bottom:1px solid rgba(255,255,255,.12);text-align:center">${btn(P,'&lsaquo; Prev',top&&'ng-p')}${btn('index.html','&#9776; Index')}${btn(N,'Next &rsaquo;',top&&'ng-n')}</div>`;
   doc.body.insertAdjacentHTML('afterbegin',nav(true));doc.body.insertAdjacentHTML('beforeend',nav(false)+KEYS);
   doc.head.insertAdjacentHTML('afterbegin',`<meta charset="utf-8"><style>${css}</style>`);
   return['<!doctype html>'+doc.documentElement.outerHTML,todo.length,bad]}
@@ -192,6 +192,8 @@ function zip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
   return new Blob([...parts,...cen,z.buffer],{type:'application/zip'})}
 function dl(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4e4)}
 const getZip=()=>dl((folder||'novelgrab')+'.zip',zip(mem));
+let sq=Promise.resolve();   // one file write at a time; queued writes are dropped the moment Stop is pressed
+const qsave=(path,s)=>{const p=sq.then(()=>stop?Promise.reject(new Error('stopped')):save(path,s));sq=p.catch(()=>{});return p};
 let mq=Promise.resolve();
 const saveMan=()=>APP?(mq=mq.then(()=>save(`NovelGrab/${folder}/manifest.json`,JSON.stringify(items.filter(i=>i.file).map(i=>({n:i.n,title:i.title,url:i.url,file:i.file,keys:i.keys,note:i.note}))))).catch(()=>{})):0;
 async function work(it,html,url,mode,clean,prev){
@@ -199,15 +201,16 @@ async function work(it,html,url,mode,clean,prev){
     if(prev)prev.keys.forEach(k=>map[k]=P);if(nx)nx.keys.forEach(k=>map[k]=N);
     const[out,ni,bad]=await build(html,url,mode,clean,map,P,N);
     const name=nameOf(it);
-    if(APP)await save(`NovelGrab/${it.dir}/${name}`,out);else{mem[name]=out;if($('auto').checked)dl(name,new Blob([out],{type:'text/html'}))}
+    if(stop){it.st='stopped';draw();return}
+    if(APP)await qsave(`NovelGrab/${it.dir}/${name}`,out);else{mem[name]=out;if($('auto').checked)dl(name,new Blob([out],{type:'text/html'}))}
     it.file=name;it.st='done';saveMan();it.note=ni?ni+' images'+(bad?', '+bad+' FAILED':''):'';if(bad)log(`#${it.n}: ${bad} of ${ni} images could not be downloaded`);else if(mode=='embed'&&!ni)log(`#${it.n}: no images found in this page`)
-  }catch(e){it.st='error: '+e.message}
+  }catch(e){it.st=stop?'stopped':'error: '+e.message}
   draw()}
 // ---------- crawl
 async function start(){
   let url=$('u').value.trim().replace(/^["']|["']$/g,'');if(!url)return;if(!/^https?:\/\//i.test(url))url='https://'+url;
   const limit=+$('limit').value||0,workers=+$('workers').value,delay=+$('delay').value||0,mode=$('images').value,clean=$('clean').value=='1';
-  items=[];logs=[];mem={};stop=false;paused=false;run=true;stopP=new Promise(f=>stopRes=f);$('go').hidden=true;$('pb').hidden=$('sb').hidden=false;$('pb').textContent='Pause';
+  items=[];logs=[];mem={};stop=false;paused=false;run=true;stopP=new Promise(f=>stopRes=f);$('go').hidden=true;$('pb').hidden=$('sb').hidden=false;$('pb').textContent='Pause';$('sb').disabled=false;$('sb').textContent='Stop';
   folder=host(url).replace(/\./g,'-')+'_'+new Date().toISOString().slice(0,16).replace(/\D/g,'');
   let wl;try{wl=await navigator.wakeLock.request('screen')}catch{}
   if(APP)try{await FS.requestPermissions()}catch{}
@@ -228,7 +231,7 @@ async function start(){
     const p=work(it,r.data,r.url,mode,clean,pv).finally(()=>pending.delete(p));pending.add(p);
     ctx={doc,url:r.url};pageIdx(doc,r.url);const last=limit&&n>=limit,nx=last?{c:[],p:null}:findNext(doc,r.url,seen,scripts),cx=chap(new URL(r.url).pathname);
     queue=last?[]:idx&&idx.length?idx.filter(x=>cx&&x.n>cx[1]&&!seen.has(norm(x.u))).slice(0,3).map(x=>({u:x.u})):[...nx.c.map(u=>({u})),...(nx.p?[{u:nx.p,p:1}]:[])];
-    await sleep(delay*1000)}
+    await nap(delay*1000)}
   }catch(e){log('Error: '+e.message)}
   prev&&prev.setNext(null);
   await Promise.all(pending);await saveMan();

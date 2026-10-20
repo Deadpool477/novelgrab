@@ -57,6 +57,19 @@ public class BgService extends Service {
         return START_NOT_STICKY;
     }
 
+    // App swiped away from the recent-apps list: stop everything, including the downloads running in the WebView.
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        stopForeground(true);
+        stopSelf();
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+    public static void shutdown(Context c) {
+        c.stopService(new Intent(c, BgService.class));
+    }
+
     @Override
     public void onDestroy() {
         on = false;
