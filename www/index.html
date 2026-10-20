@@ -266,7 +266,8 @@ async function showLib(){let r;try{r=await FS.readdir({path:'NovelGrab',director
     try{const m=JSON.parse((await FS.readFile({path:`NovelGrab/${d}/manifest.json`,directory:'DOCUMENTS',encoding:'utf8'})).data);t=(m[0]&&m[0].title||d)+'  ('+m.length+' chapters)'}catch{}
     return`<div class=r data-b="${esc(d)}"><span>${esc(t)}</span><em class=ok>open</em></div>`}));
   $('lib').innerHTML=rows.join('')||'<p>No downloads yet.</p>'}
-$('lib').onclick=async e=>{const r=e.target.closest('[data-b]');if(!r)return;const d=r.dataset.b;
+$('lib').onclick=async e=>{const r=e.target.closest('[data-b]');if(!r)r
+  turn;const d=r.dataset.b;
   try{const m=JSON.parse((await FS.readFile({path:`NovelGrab/${d}/manifest.json`,directory:'DOCUMENTS',encoding:'utf8'})).data);items=m.map(i=>({...i,dir:d,st:'done'}));folder=d;run=false;$('lib').innerHTML='';draw();scrollTo(0,$('rows').offsetTop)}catch(x){log('Cannot open: '+x.message)}};
 const nav=d=>openR(cur+d);
 if(!navigator.onLine)setNet(false);draw();
